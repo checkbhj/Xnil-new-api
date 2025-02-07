@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command - XNIL6X Modern API</title>
+  <style>
+    /* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background: linear-gradient(120deg, #4A90E2, #50C9C3);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Main Content Styles */
+main {
+  max-width: 1200px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+}
+main p, main ul {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #f3f3f3;
+}
+main a {
+  color: #FFD700;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+main a:hover {
+  color: #FF8C42;
+}
+main h2 {
+  font-size: 1.8rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #FFD700;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+ul.offer-list, ul.contact-list {
+  list-style: disc;
+  padding-left: 40px;
+  margin-top: 10px;
+}
+ul.offer-list li, ul.contact-list li {
+  margin-bottom: 10px;
+}
+
+/* Navigation Styles */
+header {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+nav .nav-btn {
+  background-color: #555;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  margin: 0 5px;
+  font-size: 16px;
+}
+
+nav .nav-btn:hover {
+  background-color: #777;
+}
+
+/* Command Box Styles */
+.command-box {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+.command-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  display: block;
+}
+.view-btn {
+  background-color: #FFD700;
+  color: #000;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+.view-btn:hover {
+  background-color: #FF8C42;
+}
+.command-details {
+  font-size: 0.9rem;
+  margin-top: 10px;
+  color: #f3f3f3;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 800px;
+  color: #000;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;  /* Make modal content scrollable */
+  max-height: 80vh;  /* Prevent modal content from being too tall */
+}
+.close-btn {
+  background-color: #FF8C42;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+.close-btn:hover {
+  background-color: #FFD700;
+}
+
+/* Copy Button Styles */
+.copy-btn {
+  background-color: #FFD700;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+.copy-btn:hover {
+  background-color: #FF8C42;
+}
+
+/* Footer Styles */
+footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  padding: 10px 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+footer a {
+  color: #FFD700;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+footer a:hover {
+  color: #FF8C42;
+    }
+    </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <button class="nav-btn" onclick="window.location.href='/docs'">Home</button>
+      <button class="nav-btn" onclick="window.location.href='/about.html'">About</button>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Commands for XNIL6X API</h1>
+    <section class="command-section">
+      <p>
+        Below is a dynamic list of commands loaded from the JSON file. Click on "View" to see the code.
+      </p>
+      <div class="command-container" id="command-container">
+        <!-- Commands will be dynamically loaded here -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Designed with 💡 and passion for modern web solutions. Visit our <a href="/">Home</a> page for more.
+  </footer>
+
+  <!-- Modal for viewing command code -->
+  <div id="command-modal" class="modal">
+    <div class="modal-content">
+      <h2>Command Code</h2>
+      <pre id="command-code"></pre>
+      <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const jsonUrl = "https://raw.githubusercontent.com/xnil6x404/command/refs/heads/main/command.json"; // Your JSON file URL
+
+    // Fetch and render commands
+    async function loadCommands() {
+      try {
+        const response = await fetch(jsonUrl);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch JSON: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.commands) {
+          throw new Error("Invalid JSON structure. 'commands' key is missing.");
+        }
+
+        const commands = data.commands;
+        const container = document.getElementById('command-container');
+
+        for (const command of commands) {
+          const commandBox = document.createElement('div');
+          commandBox.className = 'command-box';
+
+          const commandName = Object.keys(command)[0];
+          const commandDetails = command[commandName].details;
+          const commandUrl = command[commandName].url; // Correctly accessing the URL
+
+          commandBox.innerHTML = `
+            <span class="command-name">${commandName}</span>
+            <p class="command-details">${commandDetails}</p>
+            <button class="view-btn" onclick="viewCommand('${commandUrl}')">View</button>
+          `;
+
+          container.appendChild(commandBox);
+        }
+      } catch (error) {
+        console.error("Error loading commands:", error);
+        alert("Failed to load commands. Check the console for details.");
+      }
+    }
+
+    // Fetch and display command details in the modal
+    async function viewCommand(url) {
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch command code: ${response.status}`);
+    }
+
+    const data = await response.text();
+
+    const modal = document.getElementById('command-modal');
+    const codeElement = document.getElementById('command-code');
+    codeElement.textContent = data;
+
+    // Show the modal
+    modal.style.display = 'flex';
+
+    // Smooth scroll to the modal content
+    const modalContent = document.querySelector('.modal-content');
+    modalContent.scrollIntoView({ behavior: 'smooth' });
+
+  } catch (error) {
+    alert("Error fetching command code: " + error.message);
+  }
+}
+
+    // Close the modal
+    function closeModal() {
+      const modal = document.getElementById('command-modal');
+      modal.style.display = 'none';
+    }
+
+    // Function to copy code to the clipboard
+    function copyCode() {
+      const code = document.getElementById('command-code').textContent;
+
+      // Create a temporary textarea element
+      const textarea = document.createElement('textarea');
+      textarea.value = code;
+      document.body.appendChild(textarea);
+      
+      // Select and copy the text
+      textarea.select();
+      document.execCommand('copy');
+      
+      // Remove the textarea from the DOM
+      document.body.removeChild(textarea);
+      
+      // Optionally, display a notification or change button text to indicate success
+      alert("Code copied to clipboard!");
+    }
+
+    // Load commands on page load
+    document.addEventListener("DOMContentLoaded", loadCommands);
+  </script>
+</body>
+</html>

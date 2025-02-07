@@ -1,0 +1,72 @@
+const router = require("express").Router();
+const { readdirSync } = require('fs-extra');
+const path = require('path');
+const log = require('./log');
+const compression = require('compression');
+const ApiRequestCount = require("./ApiRequestCount.js");
+
+const srcPath = path.join(__dirname, "../api/");
+
+// Use compression middleware
+router.use(compression());
+
+// Cache API modules
+const apiCache = new Map();
+
+// Preload API modules
+const apiFiles = readdirSync(srcPath).filter(file => file.endsWith(".js"));
+apiFiles.forEach(file => {
+  const filePath = path.join(srcPath, file);
+  const api = require(filePath);
+  if (api.config && api.onStart) {
+    apiCache.set(api.config.name, api);
+  }
+});
+
+// Preload request count in MongoDB
+const preloadApiCounts = async () => {
+  for (const [name, api] of apiCache) {
+    const count = await ApiRequestCount.findOne({ name });
+    if (!count) {
+      const newApiCount = new ApiRequestCount({ name, count: 0 });
+      await newApiCount.save();
+    }
+  }
+};
+
+preloadApiCounts();
+
+// Set up routes
+let n = 0;
+apiCache.forEach((api, name) => {
+  const routePath = `/xnil/${name}`;
+
+  router.get(routePath, async (req, res) => {
+    try {
+      // Increment the request count for this API in MongoDB
+      const apiCount = await ApiRequestCount.findOne({ name });
+      if (apiCount) {
+        apiCount.count += 1;
+        await apiCount.save();
+      }
+
+      // Handle the request
+      await api.onStart({ req, res, log });
+    } catch (error) {
+      console.error(`Error in ${name} API:`, error);
+      res.status(500).send("An error occurred");
+    }
+  });
+
+  if (global.api && global.api instanceof Map) {
+    global.api.set(name, api);
+  } else {
+    console.warn("global.api is not a Map. Skipping setting API in global scope.");
+  }
+  n++;
+  log.main(`Successfully loaded ${name}`);
+});
+
+log.main(`Successfully loaded ${n} API${n !== 1 ? 's' : ''}`);
+
+module.exports = router;

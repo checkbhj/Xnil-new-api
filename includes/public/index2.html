@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XNIL6X API List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://i.imgur.com/2iAKcR5.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #00d9ff;
+            font-size: 28px;
+            margin-top: 40px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        th {
+            background-color: rgba(0, 123, 255, 0.8);
+        }
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        tr:hover {
+            background-color: rgba(0, 123, 255, 0.3);
+            transition: background 0.3s ease-in-out;
+        }
+        button {
+            background: linear-gradient(135deg, #00d9ff, #0066ff);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #0066ff, #00d9ff);
+            transform: scale(1.1);
+        }
+        .api-table {
+            margin-bottom: 40px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 18px;
+        }
+.nav-button {
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #218838;
+    animation: button-glow 1.5s infinite alternate;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.nav-button:hover {
+    background: linear-gradient(135deg, #218838, #28a745);
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #218838;
+}
+
+@keyframes button-glow {
+    0% {
+        box-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #218838;
+    }
+    100% {
+        box-shadow: 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #218838;
+    }
+        }
+        #api-total {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #00d9ff;
+    text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 30px #0066ff, 0 0 40px #0066ff, 0 0 50px #00d9ff;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 30px #0066ff, 0 0 40px #0066ff, 0 0 50px #00d9ff;
+    }
+    100% {
+        text-shadow: 0 0 20px #00d9ff, 0 0 30px #00d9ff, 0 0 40px #0066ff, 0 0 50px #0066ff, 0 0 60px #00d9ff;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <a href="about" class="nav-button">About</a>
+            <h1>XNIL6X API List</h1>
+            <a href="command" class="nav-button">Command</a>
+        </div>
+        <!-- Add a section to display the total count -->
+        <p id="api-total" style="text-align: center; font-size: 20px; margin-top: 20px;"></p>
+        <div id="api-list-container"></div>
+    </div>
+
+    <script>
+        // Fetch data from API
+        fetch('/api-list')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched API data:', data);
+
+                const total = data.total; // Extract the total count
+                const apis = data.apis;
+                const apiListContainer = document.getElementById('api-list-container');
+                const apiTotal = document.getElementById('api-total');
+
+                // Display the total count
+                if (total !== undefined) {
+                    apiTotal.textContent = `Total APIs: ${total}`;
+                } else {
+                    apiTotal.textContent = 'Total APIs: Not available';
+                }
+
+                // Check if APIs exist and display them
+                if (apis && apis.length > 0) {
+                    const groupedApis = apis.reduce((acc, api) => {
+                        if (!acc[api.category]) {
+                            acc[api.category] = [];
+                        }
+                        acc[api.category].push(api);
+                        return acc;
+                    }, {});
+
+                    for (const category in groupedApis) {
+                        const categorySection = document.createElement('section');
+                        const categoryTitle = document.createElement('h2');
+                        categoryTitle.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                        categorySection.appendChild(categoryTitle);
+
+                        const table = document.createElement('table');
+                        table.classList.add('api-table');
+                        table.innerHTML = `
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Endpoint</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${groupedApis[category].map(api => `
+                                    <tr>
+                                        <td>${api.name}</td>
+                                        <td>${api.description}</td>
+                                        <td><button onclick="window.open('${api.endpoint}', '_blank')">Visit API</button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        `;
+
+                        categorySection.appendChild(table);
+                        apiListContainer.appendChild(categorySection);
+                    }
+                } else {
+                    apiListContainer.innerHTML = '<p class="error-message">No APIs found.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching API data:', error);
+                const apiListContainer = document.getElementById('api-list-container');
+                apiListContainer.innerHTML = '<p class="error-message">Error fetching API data.</p>';
+            });
+    </script>
+
+</body>
+</html>
+

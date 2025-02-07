@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Stats</title>
+</head>
+<body>
+  <h1>API Request Stats</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>API Name</th>
+        <th>Request Count</th>
+      </tr>
+    </thead>
+    <tbody id="api-stats-table"></tbody>
+  </table>
+
+  <script>
+    async function fetchApiStats() {
+      try {
+        const response = await fetch('/api-stats');
+        const data = await response.json();
+        const table = document.getElementById('api-stats-table');
+        
+        data.forEach((apiStat) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${apiStat.name}</td><td>${apiStat.count}</td>`;
+          table.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching API stats:', error);
+      }
+    }
+
+    fetchApiStats();
+  </script>
+</body>
+</html>
