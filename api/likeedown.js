@@ -1,10 +1,10 @@
 exports.config = {
-    name: "tikdl",
+    name: "likeedl",
     author: "xnil6x",
-    description: "tiktok video download",
+    description: "likee video download",
     method: "get",
     category: "downloader",
-    link: ["/tikdl?url="]
+    link: ["/likeedl?url="]
 };
 
 exports.onStart = async function ({ req, res }) {
@@ -15,7 +15,7 @@ exports.onStart = async function ({ req, res }) {
     }
 
     try {
-        const igdl = await global.utils.ttsave(url);
+        const igdl = await global.utils.likeedown(url);
         res.json({ data: igdl });
     } catch (error) {
         res.status(500).json({ error: error.message });

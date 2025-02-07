@@ -1,10 +1,10 @@
 exports.config = {
-    name: "tikdl",
+    name: "pindl",
     author: "xnil6x",
-    description: "tiktok video download",
+    description: "Pinterest video download",
     method: "get",
     category: "downloader",
-    link: ["/tikdl?url="]
+    link: ["/pindl?url="]
 };
 
 exports.onStart = async function ({ req, res }) {
@@ -15,7 +15,7 @@ exports.onStart = async function ({ req, res }) {
     }
 
     try {
-        const igdl = await global.utils.ttsave(url);
+        const igdl = await global.utils.savepin(url);
         res.json({ data: igdl });
     } catch (error) {
         res.status(500).json({ error: error.message });

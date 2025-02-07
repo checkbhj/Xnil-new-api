@@ -5,7 +5,7 @@ exports.config = {
     author: 'xnil6x',
     description: 'Search for a topic on DuckDuckGo',
     method: 'get',
-    category: 'downloader',
+    category: 'search',
     link: ['/search?query=who is Jose Rizal?']
 };
 

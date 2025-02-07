@@ -248,12 +248,305 @@ async function igdown(url, proxy = null) {
     return extractPostInfo(mediaData);
 }
 
+//tikdl
 
+async function ttsave(videoUrl) { const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(videoUrl)}`;
+
+try { const response = await axios.get(apiUrl); const data = response.data;
+
+if (data.code === 0) {
+  const videoData = data.data;
+  
+  return {
+    id: videoData.author.id,
+    region: videoData.region,
+    Unique_id: videoData.author.unique_id,
+    NickName: videoData.author.nickname,
+    title: videoData.title,
+    duration: videoData.duration,
+    cover: videoData.cover,
+    noWaterMark: videoData.play,
+    waterMark: videoData.wmplay,
+  };
+} else {
+  console.error('Error fetching video:', data.msg);
+  return null;
+}
+
+} catch (error) { console.error('Error:', error); return null; } }
+
+
+//Pinterestdl
+
+async function savepin(url) {
+  try {
+    const response = await axios.get(`https://www.savepin.app/download.php?url=${encodeURIComponent(url)}&lang=en&type=redirect`);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    let results = [];
+    $('td.video-quality').each((index, element) => {
+      const type = $(element).text().trim();
+      const format = $(element).next().text().trim();
+      const downloadLinkElement = $(element).nextAll().find('#submiturl').attr('href');
+
+      if (downloadLinkElement) {
+        let downloadLink = downloadLinkElement;
+        if (downloadLink.startsWith('force-save.php?url=')) {
+          downloadLink = decodeURIComponent(downloadLink.replace('force-save.php?url=', ''));
+        }
+        results.push({ type, format, downloadLink });
+      }
+    });
+
+    const title = $('h1').text().trim();
+
+    return {
+      author: "xnil",
+      status: 200,
+      data: {
+        title,
+        data: results[0],
+        data2: results[1]
+      }
+    };
+  } catch (error) {
+    console.error("Error:", error.response ? error.response.data : error.message);
+    return { success: false, message: error.message };
+  }
+}
+
+
+//likeedl
+const { URLSearchParams } = require('url');
+
+async function likeedown(videoUrl) {
+  try {
+    const response = await axios.post(
+      'https://snapsave.cc/wp-json/aio-dl/video-data/',
+      new URLSearchParams({
+        'url': videoUrl,
+        'token': '2aa2a0f4924b44603234b01e4fd0ff614e778b0c2f2d000f29b6c42542e4a34c',
+        'hash': 'aHR0cHM6Ly9sLmxpa2VlLnZpZGVvL3YvbUdVRnNL1030YWlvLWRs'
+      }),
+      {
+        headers: {
+          'authority': 'snapsave.cc',
+          'accept': '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'cookie': 'PHPSESSID=613u24ps3qio00c9g15luf5adm; pll_language=en; dom3ic8zudi28v8lr6fgphwffqoz0j6c=d3500850-5e88-44af-bc61-03c7b643366f%3A2%3A1; sb_main_25487d0c7ea9897588de5e9383d5b500=1; sb_count_25487d0c7ea9897588de5e9383d5b500=1',
+          'origin': 'https://snapsave.cc',
+          'referer': 'https://snapsave.cc/likee-video-downloader/',
+          'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+          'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+        }
+      }
+    );
+
+    const data = response.data;
+
+    return {
+      author: "xnil",
+      status: 200,
+      url: data.url,
+      title: data.title,
+      thumbnail: data.thumbnail,
+      source: data.source,
+      video: data.medias.length > 0 ? data.medias[0].url : null,
+      quality: data.medias.length > 0 ? data.medias[0].quality : null,
+      size: data.medias.length > 0 ? data.medias[0].formattedSize : null
+    };
+  } catch (error) {
+    console.error('Error downloading Likee video:', error.message);
+    return {
+      author: "xnil",
+      status: 500,
+      error: error.message
+    };
+  }
+}
+
+//deepseek ai
+async function deepseek(text) {
+    const url = 'https://api.blackbox.ai/api/chat';
+    const data = {
+        messages: [
+            {
+                content: text,
+                role: "user"
+            }
+        ],
+        model: "deepseek-ai/DeepSeek-V3",
+        max_tokens: "1024"
+    };
+
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const formattedResponse = {
+            author: "xnil",
+            status: response.status,
+            msg: response.data
+        };
+
+        return formattedResponse;
+    } catch (error) {
+        const errorResponse = {
+            author: "Herza",
+            status: error.response ? error.response.status : 500,
+            msg: error.response ? error.response.data : error.message
+        };
+
+        return errorResponse;
+    }
+}
+
+//ytstalk
+
+async function ytStalk(username) {
+    try {
+        const { data } = await axios.get(`https://youtube.com/@${username}?si=ECterZh_kG0zdihm`);
+        const $ = cheerio.load(data);
+
+        const ytInitialDataScript = $('script').filter((i, el) => {
+            return $(el).html().includes('var ytInitialData =');
+        }).html();
+
+        const jsonData = ytInitialDataScript.match(/var ytInitialData = (.*?);/);
+        if (jsonData && jsonData[1]) {
+            const parsedData = JSON.parse(jsonData[1]);
+
+            const channelMetadata = {
+                username: null,
+                subscriberCount: null,
+                videoCount: null,
+                avatarUrl: null,
+                channelUrl: null,
+                externalId: null,
+                description: null,
+                rssUrl: null,
+                isFamilySafe: null
+            };
+
+            if (parsedData.header && parsedData.header.pageHeaderRenderer) {
+                const header = parsedData.header.pageHeaderRenderer;
+                channelMetadata.username = header.content.pageHeaderViewModel.metadata.contentMetadataViewModel.metadataRows[0].metadataParts[0].text.content;
+
+                if (header.content.pageHeaderViewModel.image.decoratedAvatarViewModel.avatar.avatarViewModel.image.sources.length > 0) {
+                    channelMetadata.avatarUrl = header.content.pageHeaderViewModel.image.decoratedAvatarViewModel.avatar.avatarViewModel.image.sources[0].url;
+                }
+            }
+
+            if (parsedData.metadata && parsedData.metadata.channelMetadataRenderer) {
+                const channelMeta = parsedData.metadata.channelMetadataRenderer;
+                channelMetadata.description = channelMeta.description;
+                channelMetadata.externalId = channelMeta.externalId;
+                channelMetadata.rssUrl = channelMeta.rssUrl;
+                channelMetadata.channelUrl = channelMeta.channelUrl;
+                channelMetadata.isFamilySafe = channelMeta.isFamilySafe;
+
+                const metadataRows = parsedData.header.pageHeaderRenderer.content.pageHeaderViewModel.metadata.contentMetadataViewModel.metadataRows;
+                if (metadataRows.length > 1) {
+                    const subscriberRow = metadataRows[1];
+                    subscriberRow.metadataParts.forEach(part => {
+                        if (part.text && part.text.content) {
+                            if (part.text.content.includes("subscribers")) {
+                                channelMetadata.subscriberCount = part.text.content;
+                            } else if (part.text.content.includes("videos")) {
+                                channelMetadata.videoCount = part.text.content;
+                            }
+                        }
+                    });
+                }
+            }
+
+            const videoDataList = [];
+            const tabs = parsedData.contents.twoColumnBrowseResultsRenderer.tabs;
+            if (tabs && tabs.length > 0) {
+                const videosTab = tabs[0].tabRenderer.content.sectionListRenderer.contents;
+                videosTab.forEach(item => {
+                    if (item.itemSectionRenderer) {
+                        item.itemSectionRenderer.contents.forEach(content => {
+                            if (content.shelfRenderer && content.shelfRenderer.content && content.shelfRenderer.content.horizontalListRenderer) {
+                                const items = content.shelfRenderer.content.horizontalListRenderer.items;
+                                items.forEach(video => {
+                                    if (video.gridVideoRenderer) {
+                                        const videoData = {
+                                            videoId: video.gridVideoRenderer.videoId,
+                                            title: video.gridVideoRenderer.title.simpleText,
+                                            thumbnail: video.gridVideoRenderer.thumbnail.thumbnails[0].url,
+                                            publishedTime: video.gridVideoRenderer.publishedTimeText.simpleText,
+                                            viewCount: video.gridVideoRenderer.viewCountText.simpleText,
+                                            navigationUrl: null,
+                                            commonConfigUrl: null,
+                                            duration: null
+                                        };
+
+                                        if (video.gridVideoRenderer.navigationEndpoint.commandMetadata) {
+                                            videoData.navigationUrl = video.gridVideoRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url;
+                                        }
+
+                                        if (video.gridVideoRenderer.navigationEndpoint.watchEndpoint && video.gridVideoRenderer.navigationEndpoint.watchEndpoint.watchEndpointSupportedOnesieConfig) {
+                                            videoData.commonConfigUrl = video.gridVideoRenderer.navigationEndpoint.watchEndpoint.watchEndpointSupportedOnesieConfig.html5PlaybackOnesieConfig.commonConfig.url;
+                                        }
+
+                                        if (video.gridVideoRenderer.thumbnailOverlays) {
+                                            video.gridVideoRenderer.thumbnailOverlays.forEach(overlay => {
+                                                if (overlay.thumbnailOverlayTimeStatusRenderer) {
+                                                    videoData.duration = overlay.thumbnailOverlayTimeStatusRenderer.text.simpleText;
+                                                }
+                                            });
+                                        }
+
+                                        videoDataList.push(videoData);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            return {
+                author: "xnil",
+                status: 200,
+                data: channelMetadata,
+                last_upload_video: videoDataList[0]
+            };
+        } else {
+            return {
+                author: "xnil",
+                status: 404,
+                msg: "Data not found"
+            };
+        }
+    } catch (error) {
+        return {
+            author: "xnil",
+            status: 500,
+            msg: error.message
+        };
+    }
+}
 
 
 const utils = {
 	shortenURL,
-	igdown
+	igdown,
+  ttsave,
+  savepin,
+  likeedown,
+  deepseek,
+  ytStalk
 };
 
 module.exports = utils;
