@@ -1,4 +1,4 @@
-const nexo = require("nexo-aio-downloader");
+const { ytdl2, pindl, ttsave, igdown, likeedown } = global.utils;
 
 exports.config = {
     name: 'downloader',
@@ -6,20 +6,19 @@ exports.config = {
     description: 'Downloads media from various platforms like Twitter, Instagram, Facebook, etc.',
     method: 'get',
     category: 'downloader',
-    link: ['/downloader']
+    link: ['/downloader?url=']
 };
 
-// Supported platforms with regex patterns for flexibility
+// Supported platforms with correct regex patterns
 const supportedPlatforms = {
-    twitter: /https?:\/\/(www\.)?(twitter\.com|x\.com)\/.*/,
-    instagram: /https?:\/\/(www\.)?instagram\.com\/.*/,
-    facebook: /https?:\/\/(www\.)?facebook\.com(\/share\/v\/)?.*/,
-    tiktok: /https?:\/\/(www\.)?(tiktok\.com|vt\.tiktok\.com)\/.*/,
-    "google-drive": /https?:\/\/(www\.)?drive\.google\.com\/.*/,
-    sfile: /https?:\/\/(www\.)?sfile\.mobi\/.*/
+    youtube: /(?:youtu\.be|youtube\.com)/,
+    pinterest: /(?:pin\.it|pinterest\.com)/,
+    tiktok: /(?:tiktok\.com)/,
+    Instagram: /(?:Instagram|instagram.com)/,
+    likee: /(?:likee\.video|l.likee\.video)/
 };
 
-exports.initialize = async function ({ req, res }) {
+exports.onStart = async function ({ req, res }) {
     try {
         let url = req.query.url;
 
@@ -28,11 +27,11 @@ exports.initialize = async function ({ req, res }) {
         }
 
         // Normalize the URL: ensure it starts with https://
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        if (!/^https?:\/\//.test(url)) {
             url = "https://" + url;
         }
 
-        // Detect platform by checking if the URL matches any supported platform regex pattern
+        // Detect platform by checking if the URL matches any regex pattern
         let platform = Object.keys(supportedPlatforms).find(key => 
             supportedPlatforms[key].test(url)
         );
@@ -43,23 +42,20 @@ exports.initialize = async function ({ req, res }) {
 
         let result;
         switch (platform) {
-            case 'twitter':
-                result = await nexo.twitter(url);
+            case 'youtube':
+                result = await ytdl2(url);
                 break;
-            case 'instagram':
-                result = await nexo.instagram(url);
-                break;
-            case 'facebook':
-                result = await nexo.facebook(url);
+            case 'pinterest':
+                result = await pindl(url);
                 break;
             case 'tiktok':
-                result = await nexo.tiktok(url);
+                result = await ttsave(url);
                 break;
-            case 'google-drive':
-                result = await nexo.googleDrive(url);
+            case 'Instagram':
+                result = await igdown(url);
                 break;
-            case 'sfile':
-                result = await nexo.sfile(url);
+            case 'likee':
+                result = await likeedown(url);
                 break;
             default:
                 return res.status(400).json({ error: "Unsupported URL" });

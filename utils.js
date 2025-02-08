@@ -220,17 +220,14 @@ function extractPostInfo(mediaData) {
     return {
       author: "xnil",
       status: 200,
-      data: {
-      url: getUrlFromData(mediaData),
-      metadata: {
+      url: getUrlFromData(mediaData)[0],
          caption: mediaData.edge_media_to_caption.edges[0]?.node.text || null,
          username: mediaData.owner.username,
          videoviews: view,
          like: mediaData.edge_media_preview_like.count,
          comment: mediaData.edge_media_to_comment.count,
          isVideo: mediaData.is_video,
-        }
-      }
+
     };
   } catch (error) {
     throw error;
@@ -538,6 +535,90 @@ async function ytStalk(username) {
     }
 }
 
+async function ytdl2(url) {
+  try {
+    const response = await axios.post(
+      'https://oo6o8y6la6.execute-api.eu-central-1.amazonaws.com/default/Upload-DownloadYoutubeLandingPage',
+      JSON.stringify({
+        url: url,
+        app: "transkriptor",
+        is_only_download: true
+      }),
+      {
+        headers: {
+          'authority': 'oo6o8y6la6.execute-api.eu-central-1.amazonaws.com',
+          'accept': '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'content-type': 'text/plain;charset=UTF-8',
+          'origin': 'https://transkriptor.com',
+          'referer': 'https://transkriptor.com/',
+          'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'cross-site',
+          'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+        }
+      }
+    );
+
+   const data = response.data.download_url;
+
+    return {
+      author: "xnil",
+      status: 200,
+      url: data,
+      message: "Download Succes"
+    };
+  } catch (error) {
+    console.error('❌ Error fetching video link:', error.response ? error.response.data : error.message);
+    return null;
+  }
+}
+
+async function pindl(url) {
+  try {
+    const response = await axios.get(`https://www.savepin.app/download.php?url=${encodeURIComponent(url)}&lang=en&type=redirect`);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    let results = [];
+    $('td.video-quality').each((index, element) => {
+      const type = $(element).text().trim();
+      const format = $(element).next().text().trim();
+      const downloadLinkElement = $(element).nextAll().find('#submiturl').attr('href');
+
+      if (downloadLinkElement) {
+        let downloadLink = downloadLinkElement;
+        if (downloadLink.startsWith('force-save.php?url=')) {
+          downloadLink = decodeURIComponent(downloadLink.replace('force-save.php?url=', ''));
+        }
+        results.push({ type, format, downloadLink });
+      }
+    });
+
+    const title = $('h1').text().trim();
+
+    return {
+      author: "xnil",
+      status: 200,
+        title,
+        type: results[0].type,
+        url: results[0].downloadLink,
+        type2: results[0].type,
+        url2: results[1].downloadLink
+      
+    };
+  } catch (error) {
+    console.error("Error:", error.response ? error.response.data : error.message);
+    return { success: false, message: error.message };
+  }
+}
+
+
+
+
 
 const utils = {
 	shortenURL,
@@ -546,7 +627,9 @@ const utils = {
   savepin,
   likeedown,
   deepseek,
-  ytStalk
+  ytStalk,
+  ytdl2,
+  pindl
 };
 
 module.exports = utils;
