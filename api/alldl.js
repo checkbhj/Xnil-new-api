@@ -1,12 +1,12 @@
-const { ytdl2, pindl, ttsave, igdown, likeedown } = global.utils;
+const { ytdl2, pindl, ttsave, igdown, likeedown, fbdl } = global.utils;
 
 exports.config = {
-    name: 'downloader',
+    name: 'alldl',
     author: 'xnil6x',
     description: 'Downloads media from various platforms like Twitter, Instagram, Facebook, etc.',
     method: 'get',
     category: 'downloader',
-    link: ['/downloader?url=']
+    link: ['/alldl?url=']
 };
 
 // Supported platforms with correct regex patterns
@@ -15,7 +15,8 @@ const supportedPlatforms = {
     pinterest: /(?:pin\.it|pinterest\.com)/,
     tiktok: /(?:tiktok\.com)/,
     Instagram: /(?:Instagram|instagram.com)/,
-    likee: /(?:likee\.video|l.likee\.video)/
+    likee: /(?:likee\.video|l.likee\.video)/,
+    facebook: /(?:facebook\.com|fb\.watch)/
 };
 
 exports.onStart = async function ({ req, res }) {
@@ -56,6 +57,9 @@ exports.onStart = async function ({ req, res }) {
                 break;
             case 'likee':
                 result = await likeedown(url);
+                break;
+            case 'facebook':
+                result = await fbdl(url);
                 break;
             default:
                 return res.status(400).json({ error: "Unsupported URL" });

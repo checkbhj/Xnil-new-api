@@ -1,6 +1,8 @@
 const axios = require("axios");
-const qs = require('qs')
-const cheerio = require('cheerio')
+const cheerio = require("cheerio");
+const qs = require("querystring");
+const { URLSearchParams } = require('url');
+
 
 async function shortenURL(url) {
 	try {
@@ -262,7 +264,7 @@ if (data.code === 0) {
     title: videoData.title,
     duration: videoData.duration,
     cover: videoData.cover,
-    noWaterMark: videoData.play,
+    url: videoData.play,
     waterMark: videoData.wmplay,
   };
 } else {
@@ -315,8 +317,6 @@ async function savepin(url) {
 
 
 //likeedl
-const { URLSearchParams } = require('url');
-
 async function likeedown(videoUrl) {
   try {
     const response = await axios.post(
@@ -617,7 +617,54 @@ async function pindl(url) {
 }
 
 
+async function fbdl(url) {
+  if (!url) {
+    console.error('Error: No URL provided.');
+    return null;
+  }
 
+  try {
+    const response = await axios.post(
+      'https://fbdownloaderhd.com/wp-json/aio-dl/video-data/',
+      new URLSearchParams({
+        'url': url,
+        'token': '8233ce3364fb7a3ba1d7c31995e559b7c34af3d063276e3f5d38150d724005d2',
+        'hash': 'aHR0cHM6Ly93d3cuZmFjZWJvb2suY29tL3NoYXJlL3YvMTVWcDhHV1ZuaC8=1044YWlvLWRs'
+      }),
+      {
+        headers: {
+          'authority': 'fbdownloaderhd.com',
+          'accept': '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'cookie': 'pll_language=en; PHPSESSID=dt61lnkqvt751rifu25depllmh; FCNEC=%5B%5B%22AKsRol9nkDGOuNtj3WGA8OZ67gp9u-KFfExnRHP5UzXjux6GgQbj04PahO23EqwtkD1LDtOnRaFuerP0TUG_YyZ8EAXOKgGDF6aS7HZ_jKiCnMLYfSW8PRWG1ZD8851GrNQalaag5_wK3Xk4c3S84yh9-GhUIVOBzQ%3D%3D%22%5D%5D',
+          'origin': 'https://fbdownloaderhd.com',
+          'referer': 'https://fbdownloaderhd.com/facebook-video-downloader/',
+          'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+          'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+        }
+      }
+    );
+
+    const xnil = response.data;
+
+    return {
+      title: xnil.title,
+      thumbnail: xnil.thumbnail,
+      duration: xnil.duration,
+      source: xnil.source,
+      url: xnil.medias[0].url,
+      hd: xnil.medias[1],
+    }
+  } catch (error) {
+    console.error('Error:', error.response ? error.response.data : error.message);
+    return null;
+  }
+}
 
 
 const utils = {
@@ -629,7 +676,8 @@ const utils = {
   deepseek,
   ytStalk,
   ytdl2,
-  pindl
+  pindl,
+  fbdl
 };
 
 module.exports = utils;

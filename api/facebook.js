@@ -60,11 +60,9 @@ async function fbdl(url) {
     return {
       author: "xnil",
       status: 200,
-      data: {
-        hd: hdImgur,
+        url: hdImgur,
         message: "HD streaming is working.",
-        sd: sdImgur,
-      },
+        url2: sdImgur,
     };
   } catch (error) {
     console.error("Error fetching video:", error);

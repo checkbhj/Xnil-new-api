@@ -17,25 +17,35 @@
             max-width: 1200px;
             margin: 50px auto;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
             border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
         h1 {
             text-align: center;
             color: #fff;
-            font-size: 36px;
-            margin-bottom: 20px;
+            font-size: 38px;
+            text-shadow: 0 0 15px #00d9ff;
         }
         h2 {
             color: #00d9ff;
-            font-size: 28px;
+            font-size: 26px;
             margin-top: 40px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 5px;
         }
         table {
             width: 100%;
@@ -52,13 +62,15 @@
             color: #fff;
         }
         th {
-            background-color: rgba(0, 123, 255, 0.8);
+            background: rgba(0, 123, 255, 0.8);
+            font-size: 18px;
+            text-align: center;
         }
         tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.1);
         }
         tr:hover {
-            background-color: rgba(0, 123, 255, 0.3);
+            background-color: rgba(0, 123, 255, 0.4);
             transition: background 0.3s ease-in-out;
         }
         button {
@@ -68,66 +80,46 @@
             border: none;
             cursor: pointer;
             border-radius: 4px;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: background 0.3s, transform 0.2s;
         }
         button:hover {
             background: linear-gradient(135deg, #0066ff, #00d9ff);
             transform: scale(1.1);
         }
-        .api-table {
-            margin-bottom: 40px;
+        .nav-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
         }
-        .error-message {
-            color: red;
-            text-align: center;
-            font-size: 18px;
-        }
-.nav-button {
-    background: linear-gradient(135deg, #28a745, #218838);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #218838;
-    animation: button-glow 1.5s infinite alternate;
-    transition: background-color 0.3s, transform 0.3s;
-}
 
-.nav-button:hover {
-    background: linear-gradient(135deg, #218838, #28a745);
-    transform: scale(1.1);
-    box-shadow: 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #218838;
-}
-
-@keyframes button-glow {
-    0% {
-        box-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #218838;
-    }
-    100% {
-        box-shadow: 0 0 20px #28a745, 0 0 30px #28a745, 0 0 40px #218838;
-    }
+        .nav-button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
         }
         #api-total {
-    text-align: center;
-    font-size: 24px;
-    margin-top: 20px;
-    font-weight: bold;
-    color: #00d9ff;
-    text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 30px #0066ff, 0 0 40px #0066ff, 0 0 50px #00d9ff;
-    animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-    0% {
-        text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff, 0 0 30px #0066ff, 0 0 40px #0066ff, 0 0 50px #00d9ff;
-    }
-    100% {
-        text-shadow: 0 0 20px #00d9ff, 0 0 30px #00d9ff, 0 0 40px #0066ff, 0 0 50px #0066ff, 0 0 60px #00d9ff;
-    }
-}
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d9ff;
+            text-shadow: 0 0 15px #00d9ff;
+            margin-top: 20px;
+        }
+        .loading {
+            text-align: center;
+            font-size: 18px;
+            color: #f1c40f;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -138,36 +130,31 @@
             <h1>XNIL6X API List</h1>
             <a href="command" class="nav-button">Command</a>
         </div>
-        <!-- Add a section to display the total count -->
-        <p id="api-total" style="text-align: center; font-size: 20px; margin-top: 20px;"></p>
-        <div id="api-list-container"></div>
+        <p id="api-total"></p>
+        <div id="api-list-container">
+            <p class="loading">Loading API data...</p>
+        </div>
     </div>
 
     <script>
-        // Fetch data from API
         fetch('/api-list')
             .then(response => response.json())
             .then(data => {
-                console.log('Fetched API data:', data);
-
-                const total = data.total; // Extract the total count
+                document.querySelector('.loading').style.display = 'none';
+                const total = data.total;
                 const apis = data.apis;
                 const apiListContainer = document.getElementById('api-list-container');
                 const apiTotal = document.getElementById('api-total');
 
-                // Display the total count
                 if (total !== undefined) {
                     apiTotal.textContent = `Total APIs: ${total}`;
                 } else {
                     apiTotal.textContent = 'Total APIs: Not available';
                 }
 
-                // Check if APIs exist and display them
                 if (apis && apis.length > 0) {
                     const groupedApis = apis.reduce((acc, api) => {
-                        if (!acc[api.category]) {
-                            acc[api.category] = [];
-                        }
+                        if (!acc[api.category]) acc[api.category] = [];
                         acc[api.category].push(api);
                         return acc;
                     }, {});
@@ -179,7 +166,6 @@
                         categorySection.appendChild(categoryTitle);
 
                         const table = document.createElement('table');
-                        table.classList.add('api-table');
                         table.innerHTML = `
                             <thead>
                                 <tr>
@@ -207,12 +193,9 @@
                 }
             })
             .catch(error => {
-                console.error('Error fetching API data:', error);
-                const apiListContainer = document.getElementById('api-list-container');
-                apiListContainer.innerHTML = '<p class="error-message">Error fetching API data.</p>';
+                document.querySelector('.loading').textContent = 'Error fetching API data.';
             });
     </script>
 
 </body>
 </html>
-
