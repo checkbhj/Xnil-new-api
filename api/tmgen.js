@@ -3,7 +3,7 @@ exports.config = {
   author: "xnil6x", 
   description: "temp mail gen", 
   method: "get", 
-  category: "downloader", 
+  category: "tools", 
   link: ["/tmgen"] 
 };
 

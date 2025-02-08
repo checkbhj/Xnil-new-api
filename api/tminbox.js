@@ -3,7 +3,7 @@ exports.config = {
   author: "xnil6x", 
   description: "tminbox check", 
   method: "get", 
-  category: "downloader", 
+  category: "tools", 
   link: ["/tminbox?mail="] 
 };
 
