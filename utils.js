@@ -667,6 +667,72 @@ async function fbdl(url) {
 }
 
 
+async function tempinbox(mail) {
+  try {
+    const response = await axios.get(`https://api.internal.temp-mail.io/api/v3/email/${mail}/messages`, {
+      headers: {
+        'authority': 'api.internal.temp-mail.io',
+        'accept': 'application/json, text/plain, */*',
+        'accept-language': 'en-US,en;q=0.9',
+        'application-name': 'web',
+        'application-version': '3.0.0',
+        'origin': 'https://temp-mail.io',
+        'referer': 'https://temp-mail.io/',
+        'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+        'sec-ch-ua-mobile': '?1',
+        'sec-ch-ua-platform': '"Android"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+      }
+    });
+
+    const data = response.data;
+    return {
+      response: data,
+    };
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+  }
+}
+
+async function tempgen() {
+  try {
+    const response = await axios.post(
+      'https://api.internal.temp-mail.io/api/v3/email/new',
+      {
+        'min_name_length': 10,
+        'max_name_length': 10
+      },
+      {
+        headers: {
+          'authority': 'api.internal.temp-mail.io',
+          'accept-language': 'en-US,en;q=0.9',
+          'application-name': 'web',
+          'application-version': '3.0.0',
+          'origin': 'https://temp-mail.io',
+          'referer': 'https://temp-mail.io/',
+          'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+          'sec-ch-ua-mobile': '?1',
+          'sec-ch-ua-platform': '"Android"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-site',
+          'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36'
+        }
+      }
+    );
+
+    const data = response.data;
+    return {
+      response: data,
+    };
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 const utils = {
 	shortenURL,
 	igdown,
@@ -677,7 +743,9 @@ const utils = {
   ytStalk,
   ytdl2,
   pindl,
-  fbdl
+  fbdl,
+  tempinbox,
+  tempgen
 };
 
 module.exports = utils;
