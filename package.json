@@ -4,8 +4,8 @@
   "description": "A simple rest api by XNIL",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node index.js"
+    "start": "node index.js",
+    "dev": "ts-node index.ts"
   },
   "repository": {
     "type": "git",
@@ -15,7 +15,6 @@
   "author": "AceGerome",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^18.0.6",
     "@distube/ytdl-core": "^4.15.9",
     "api-dylux": "^1.8.5",
     "axios": "^1.6.8",
@@ -44,5 +43,11 @@
     "ssl-express-www": "^3.2.1",
     "unlimited-ai": "^2.0.2",
     "hercai": "^12.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "typescript": "^5.7.3",
+    "ts-node": "^10.9.2",
+    "concurrently": "^9.1.2"
   }
 }

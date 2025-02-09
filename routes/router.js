@@ -14,7 +14,7 @@ router.use(compression());
 const apiCache = new Map();
 
 // Preload API modules
-const apiFiles = readdirSync(srcPath).filter(file => file.endsWith(".js"));
+const apiFiles = readdirSync(srcPath).filter(file => file.endsWith(".js") || file.endsWith(".ts"));
 apiFiles.forEach(file => {
   const filePath = path.join(srcPath, file);
   const api = require(filePath);
